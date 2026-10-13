@@ -1,0 +1,41 @@
+---
+import '../styles/global.css';
+import { NewsApp } from '../components/NewsApp';
+import { aggregateNews } from '../services/newsAggregator';
+import type { NewsApiResponse } from '../types/news';
+
+let initialData: NewsApiResponse | null = null;
+
+try {
+  initialData = await aggregateNews(false);
+} catch (error: any) {
+  initialData = {
+    success: false,
+    articles: [],
+    total: 0,
+    fetchedAt: new Date().toISOString(),
+    sourcesStatus: [],
+    trendingHashtags: [],
+    error: error?.message || 'Error al cargar las noticias iniciales en el servidor',
+  };
+}
+---
+
+<!doctype html>
+<html lang="es" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <meta
+      name="description"
+      content="DevPulse - Radar developer en tiempo real. Noticias oficiales de midudev, GitHub, Google web.dev, Vercel, Mozilla Hacks, DEV Community, Hacker News y medios tech."
+    />
+    <meta name="theme-color" content="#070913" />
+    <title>DevPulse | Radar Developer, midudev & Tendencias Tech</title>
+  </head>
+  <body class="bg-[#070913] text-slate-100 min-h-screen">
+    <NewsApp client:load initialData={initialData} />
+  </body>
+</html>
