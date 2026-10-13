@@ -51,11 +51,17 @@ const TELECOM_KEYWORDS = [
   't-mobile',
   'verizon',
   'at&t',
+  'att',
+  'cisco',
+  'huawei',
+  'harmonyos',
   'ericsson',
   'nokia',
-  'huawei',
   'qualcomm',
   'router',
+  'switch',
+  'redes',
+  'networking',
   'wifi',
   'wi-fi',
   'voip',
@@ -206,7 +212,24 @@ const COMMON_TAG_PATTERNS: { regex: RegExp; tag: string }[] = [
   { regex: /\b(devops|docker|kubernetes)\b/i, tag: '#devops' },
   { regex: /\b(linux)\b/i, tag: '#linux' },
   { regex: /\b(telecom|5g|satelite|starlink|fibra)\b/i, tag: '#telecom' },
+  { regex: /\b(cisco)\b/i, tag: '#cisco' },
+  { regex: /\b(at&t|att)\b/i, tag: '#att' },
+  { regex: /\b(huawei|harmonyos)\b/i, tag: '#huawei' },
+  { regex: /\b(hugging\s?face)\b/i, tag: '#huggingface' },
 ];
+
+const NON_TECH_PATTERNS = [
+  /\bcooking influencer\b/i,
+  /\b(recipe|recipes|receta|recetas)\b/i,
+  /\b(horoscope|horóscopo)\b/i,
+  /\b(weight loss|diet plan|lose weight)\b/i,
+  /\b(dating app|dating advice)\b/i,
+];
+
+export function isNonTechNoise(title: string, snippet: string = ''): boolean {
+  const combined = `${title} ${snippet}`;
+  return NON_TECH_PATTERNS.some((pattern) => pattern.test(combined));
+}
 
 const INVALID_TAGS = new Set(['#x2f', '#39', '#34', '#amp', '#quot', '#gt', '#lt', '#nbsp', '#039', '#160']);
 

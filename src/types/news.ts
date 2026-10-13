@@ -19,13 +19,18 @@ export type SourceFilterId =
   | 'webdev'
   | 'vercel'
   | 'mozilla'
+  | 'cisco'
+  | 'att-mexico'
+  | 'att'
+  | 'huawei'
+  | 'huggingface'
   | 'devto'
   | 'hackernews'
   | 'techcrunch'
   | 'nyt'
   | 'medium';
 
-export type SourceType = 'creator' | 'official-dev' | 'community' | 'media';
+export type SourceType = 'creator' | 'official-dev' | 'community' | 'media' | 'telecom';
 
 export interface SourceInfo {
   id: string;

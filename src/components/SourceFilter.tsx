@@ -1,6 +1,6 @@
 import React from 'react';
 import type { SourceFilterId, SourceStatus } from '../types/news';
-import { Newspaper, Sparkles, ShieldCheck, Users } from 'lucide-react';
+import { Newspaper, Sparkles } from 'lucide-react';
 
 interface SourceFilterProps {
   activeSource: SourceFilterId;
@@ -18,15 +18,19 @@ interface SourceOption {
 const SOURCES: SourceOption[] = [
   { id: 'all', label: 'Todas', category: 'all' },
   { id: 'midudev', label: 'midudev', badge: '⭐ Creador', category: 'creator' },
+  { id: 'cisco', label: 'Cisco', category: 'official' },
+  { id: 'att-mexico', label: 'AT&T México', category: 'official' },
+  { id: 'att', label: 'AT&T', category: 'official' },
+  { id: 'huawei', label: 'Huawei', category: 'official' },
   { id: 'github', label: 'GitHub Blog', category: 'official' },
   { id: 'webdev', label: 'web.dev (Google)', category: 'official' },
   { id: 'vercel', label: 'Vercel', category: 'official' },
   { id: 'mozilla', label: 'Mozilla Hacks', category: 'official' },
+  { id: 'huggingface', label: 'Hugging Face', category: 'community' },
   { id: 'devto', label: 'DEV Community', category: 'community' },
   { id: 'hackernews', label: 'Hacker News', category: 'community' },
   { id: 'techcrunch', label: 'TechCrunch', category: 'media' },
   { id: 'nyt', label: 'NY Times', category: 'media' },
-  { id: 'medium', label: 'Medium', category: 'media' },
 ];
 
 export const SourceFilter: React.FC<SourceFilterProps> = ({

@@ -1,6 +1,7 @@
 import type { Article, NewsApiResponse, SourceStatus, TrendingHashtag } from '../types/news';
 import { fetchRssFeed, RSS_FEEDS } from './rssParser';
 import { fetchHackerNews } from './hackerNews';
+import { isNonTechNoise } from './categorizer';
 
 interface CacheEntry {
   data: NewsApiResponse;
@@ -81,6 +82,9 @@ export async function aggregateNews(forceRefresh = false): Promise<NewsApiRespon
   const uniqueArticles: Article[] = [];
 
   for (const article of allArticles) {
+    if (isNonTechNoise(article.title, article.snippet)) {
+      continue;
+    }
     const normTitle = article.title.toLowerCase().trim();
     if (seenUrls.has(article.link) || seenTitles.has(normTitle)) {
       continue;

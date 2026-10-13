@@ -1,5 +1,5 @@
 import Parser from 'rss-parser';
-import type { Article, CategoryName, SourceInfo, SourceType } from '../types/news';
+import type { Article, CategoryName, SourceInfo } from '../types/news';
 import { detectCategory, extractHashtags } from './categorizer';
 
 // Custom fields to capture media, youtube metadata, and creators
@@ -232,19 +232,81 @@ export const RSS_FEEDS: RssFeedConfig[] = [
     url: 'https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml',
   },
   {
-    sourceId: 'medium',
+    sourceId: 'huggingface',
     source: {
-      id: 'medium',
-      name: 'Medium (AI)',
-      shortName: 'Medium',
-      domain: 'medium.com',
+      id: 'huggingface',
+      name: 'Hugging Face',
+      shortName: 'HF',
+      domain: 'huggingface.co',
       badgeColor: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
       textColor: 'text-amber-300',
       borderColor: 'border-amber-500/40',
-      type: 'media',
+      type: 'community',
     },
-    url: 'https://medium.com/feed/tag/artificial-intelligence',
+    url: 'https://huggingface.co/blog/feed.xml',
     forcedCategory: 'IA & ML',
+  },
+
+  // 5. Telecomunicaciones, Redes & Conectividad Oficial
+  {
+    sourceId: 'cisco',
+    source: {
+      id: 'cisco',
+      name: 'Cisco',
+      shortName: 'Cisco',
+      domain: 'cisco.com',
+      badgeColor: 'bg-sky-500/15 text-sky-300 border-sky-400/30',
+      textColor: 'text-sky-300',
+      borderColor: 'border-sky-400/40',
+      type: 'telecom',
+    },
+    url: 'https://blogs.cisco.com/feed',
+    forcedCategory: 'Telecomunicaciones',
+  },
+  {
+    sourceId: 'att-mexico',
+    source: {
+      id: 'att-mexico',
+      name: 'AT&T México',
+      shortName: 'AT&T MX',
+      domain: 'att.com.mx',
+      badgeColor: 'bg-blue-500/15 text-blue-300 border-blue-400/30',
+      textColor: 'text-blue-300',
+      borderColor: 'border-blue-400/40',
+      type: 'telecom',
+    },
+    url: 'https://news.google.com/rss/search?q=AT%26T+Mexico&hl=es-419&gl=MX&ceid=MX:es-419',
+    forcedCategory: 'Telecomunicaciones',
+  },
+  {
+    sourceId: 'att',
+    source: {
+      id: 'att',
+      name: 'AT&T',
+      shortName: 'AT&T',
+      domain: 'att.com',
+      badgeColor: 'bg-cyan-500/15 text-cyan-300 border-cyan-400/30',
+      textColor: 'text-cyan-300',
+      borderColor: 'border-cyan-400/40',
+      type: 'telecom',
+    },
+    url: 'https://news.google.com/rss/search?q=AT%26T+telecom&hl=en-US&gl=US&ceid=US:en',
+    forcedCategory: 'Telecomunicaciones',
+  },
+  {
+    sourceId: 'huawei',
+    source: {
+      id: 'huawei',
+      name: 'Huawei',
+      shortName: 'Huawei',
+      domain: 'huawei.com',
+      badgeColor: 'bg-rose-500/15 text-rose-300 border-rose-500/30',
+      textColor: 'text-rose-300',
+      borderColor: 'border-rose-500/40',
+      type: 'telecom',
+    },
+    url: 'https://news.google.com/rss/search?q=Huawei+telecom+OR+Huawei+5G+OR+HarmonyOS&hl=es-419&gl=MX&ceid=MX:es-419',
+    forcedCategory: 'Telecomunicaciones',
   },
 ];
 
@@ -263,6 +325,20 @@ export async function fetchRssFeed(config: RssFeedConfig): Promise<Article[]> {
     // Normalize midudev multiline titles if needed
     if (config.sourceId === 'midudev') {
       title = title.replace(/\n+/g, ' ').trim();
+    }
+
+    let author: string | undefined =
+      config.sourceId === 'midudev'
+        ? 'midudev'
+        : item.creator || item['dc:creator'] || undefined;
+
+    // For feeds with "Title - SourceName" like Google News (AT&T, Huawei, etc.)
+    if (!author && title.includes(' - ')) {
+      const parts = title.split(' - ');
+      if (parts.length > 1 && (parts[parts.length - 1]?.length || 0) < 40) {
+        author = parts.pop()?.trim();
+        title = parts.join(' - ').trim();
+      }
     }
 
     let rawSnippet = '';
@@ -319,10 +395,7 @@ export async function fetchRssFeed(config: RssFeedConfig): Promise<Article[]> {
       snippet: snippet || 'Haz clic para leer el contenido original en la fuente oficial.',
       source: config.source,
       category,
-      author:
-        config.sourceId === 'midudev'
-          ? 'midudev'
-          : item.creator || item['dc:creator'] || undefined,
+      author,
       imageUrl,
       hashtags,
       isSpecial: config.isSpecial,

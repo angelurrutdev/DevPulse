@@ -397,7 +397,7 @@ export const NewsApp: React.FC<NewsAppProps> = ({ initialData }) => {
             DevPulse · Radar Developer & Tech News Hub
           </p>
           <p className="text-[11px] text-slate-400">
-            Conectado a midudev, GitHub, Google web.dev, Vercel, Mozilla, DEV, Hacker News, TechCrunch y NY Times
+            Conectado a midudev, Cisco, AT&T México, Huawei, GitHub, Google web.dev, Vercel, Hugging Face, Hacker News y TechCrunch
           </p>
           <div className="flex flex-wrap justify-center gap-2 text-[11px] text-slate-400 pt-1">
             <span>Astro 7</span>
