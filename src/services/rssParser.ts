@@ -276,6 +276,8 @@ export const RSS_FEEDS: RssFeedConfig[] = [
       textColor: 'text-sky-300',
       borderColor: 'border-sky-400/40',
       type: 'telecom',
+      avatarUrl: 'https://blogs.cisco.com/gcs/ciscoblogs/1/2024/09/cropped-Cisco-logo-thumb-sky-blue-150x150.jpg',
+      verified: true,
     },
     url: 'https://blogs.cisco.com/feed',
     forcedCategory: 'Telecomunicaciones',
@@ -332,16 +334,34 @@ export async function fetchRssFeed(config: RssFeedConfig): Promise<Article[]> {
     return await fetchMidudevArticles(config.source);
   }
 
-  const feed = await parser.parseURL(config.url);
+  let items: any[] = [];
 
-  if (!feed.items || !Array.isArray(feed.items)) {
+  if (config.sourceId === 'cisco') {
+    const urls = [
+      config.url,
+      'https://news.google.com/rss/search?q=Cisco+telecom+OR+Cisco+redes+OR+Cisco+Systems&hl=es-419&gl=MX&ceid=MX:es-419',
+    ];
+    const feeds = await Promise.allSettled(urls.map((u) => parser.parseURL(u)));
+    for (const res of feeds) {
+      if (res.status === 'fulfilled' && Array.isArray(res.value.items)) {
+        items.push(...res.value.items);
+      }
+    }
+  } else {
+    const feed = await parser.parseURL(config.url);
+    if (feed.items && Array.isArray(feed.items)) {
+      items = feed.items;
+    }
+  }
+
+  if (items.length === 0) {
     return [];
   }
 
-  // Midudev and major feeds: keep up to 20 items each
-  const maxItems = config.sourceId === 'midudev' ? 20 : 15;
+  // Midudev, Cisco and major feeds: keep up to 25 items each
+  const maxItems = config.sourceId === 'midudev' || config.sourceId === 'cisco' ? 25 : 15;
 
-  return feed.items.slice(0, maxItems).map((item, index): Article => {
+  return items.slice(0, maxItems).map((item, index): Article => {
     let title = (item.title || 'Sin título').trim();
     // Normalize midudev multiline titles if needed
     if (config.sourceId === 'midudev') {

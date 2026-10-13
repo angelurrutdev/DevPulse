@@ -175,7 +175,7 @@ export const NewsApp: React.FC<NewsAppProps> = ({ initialData }) => {
                 activeSource={sourceFilter}
                 onSelectSource={(source) => {
                   setSourceFilter(source);
-                  if (source === 'midudev') {
+                  if (source !== 'all') {
                     setCategoryFilter('all');
                   }
                 }}

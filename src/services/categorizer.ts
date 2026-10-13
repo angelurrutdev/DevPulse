@@ -258,6 +258,12 @@ export function extractHashtags(
     tagsSet.add('#medium');
   }
 
+  // If cisco, always include #cisco and #telecom
+  if (sourceId === 'cisco') {
+    tagsSet.add('#cisco');
+    tagsSet.add('#telecom');
+  }
+
   // Include valid raw tags from feeds (Medium, DEV.to, etc.)
   for (const raw of rawTags) {
     if (typeof raw === 'string') {
