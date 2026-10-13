@@ -20,8 +20,6 @@ import {
   Database,
   RefreshCw,
   Hash,
-  Sparkles,
-  Command,
 } from 'lucide-react';
 
 interface NewsAppProps {
@@ -121,8 +119,11 @@ export const NewsApp: React.FC<NewsAppProps> = ({ initialData }) => {
           setCategoryFilter(isSavedView ? 'all' : 'saved');
         }}
         onSelectMidu={() => {
-          setSourceFilter(isMiduOnly ? 'all' : 'midudev');
-          if (isSavedView) setCategoryFilter('all');
+          const next = isMiduOnly ? 'all' : 'midudev';
+          setSourceFilter(next);
+          if (next === 'midudev') {
+            setCategoryFilter('all');
+          }
         }}
         isMiduActive={isMiduOnly}
         viewMode={viewMode}
@@ -136,7 +137,12 @@ export const NewsApp: React.FC<NewsAppProps> = ({ initialData }) => {
           <MidudevSpotlight
             miduArticles={miduArticles}
             activeSource={sourceFilter}
-            onSelectSource={setSourceFilter}
+            onSelectSource={(source) => {
+              setSourceFilter(source);
+              if (source === 'midudev') {
+                setCategoryFilter('all');
+              }
+            }}
             onArticleClick={(article) => setQuickViewArticle(article)}
           />
         )}
@@ -167,7 +173,12 @@ export const NewsApp: React.FC<NewsAppProps> = ({ initialData }) => {
             <div className="border-t border-white/[0.08] pt-3">
               <SourceFilter
                 activeSource={sourceFilter}
-                onSelectSource={setSourceFilter}
+                onSelectSource={(source) => {
+                  setSourceFilter(source);
+                  if (source === 'midudev') {
+                    setCategoryFilter('all');
+                  }
+                }}
                 sourcesStatus={sourcesStatus}
               />
             </div>
@@ -397,7 +408,7 @@ export const NewsApp: React.FC<NewsAppProps> = ({ initialData }) => {
             DevPulse · Radar Developer & Tech News Hub
           </p>
           <p className="text-[11px] text-slate-400">
-            Conectado a midudev, Cisco, AT&T México, Huawei, GitHub, Google web.dev, Vercel, Hugging Face, Hacker News y TechCrunch
+            Conectado a midudev, Cisco, AT&T México, Huawei, GitHub, Google web.dev, Vercel, Hugging Face, Hacker News, Medium y TechCrunch
           </p>
           <div className="flex flex-wrap justify-center gap-2 text-[11px] text-slate-400 pt-1">
             <span>Astro 7</span>

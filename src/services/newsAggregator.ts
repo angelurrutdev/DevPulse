@@ -2,6 +2,7 @@ import type { Article, NewsApiResponse, SourceStatus, TrendingHashtag } from '..
 import { fetchRssFeed, RSS_FEEDS } from './rssParser';
 import { fetchHackerNews } from './hackerNews';
 import { isNonTechNoise } from './categorizer';
+import { fetchMidudevArticles } from './midudevFetcher';
 
 interface CacheEntry {
   data: NewsApiResponse;
@@ -24,7 +25,10 @@ export async function aggregateNews(forceRefresh = false): Promise<NewsApiRespon
   // Prepare all feed fetch promises
   const feedPromises = RSS_FEEDS.map(async (config) => {
     try {
-      const items = await fetchRssFeed(config);
+      const items =
+        config.sourceId === 'midudev'
+          ? await fetchMidudevArticles(config.source)
+          : await fetchRssFeed(config);
       sourcesStatus.push({
         sourceId: config.sourceId,
         name: config.source.name,
@@ -82,7 +86,7 @@ export async function aggregateNews(forceRefresh = false): Promise<NewsApiRespon
   const uniqueArticles: Article[] = [];
 
   for (const article of allArticles) {
-    if (isNonTechNoise(article.title, article.snippet)) {
+    if (article.source.id !== 'midudev' && isNonTechNoise(article.title, article.snippet)) {
       continue;
     }
     const normTitle = article.title.toLowerCase().trim();

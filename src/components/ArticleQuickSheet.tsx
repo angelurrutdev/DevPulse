@@ -5,7 +5,6 @@ import {
   X,
   ExternalLink,
   Bookmark,
-  Share2,
   Check,
   Clock,
   User,
@@ -104,7 +103,13 @@ export const ArticleQuickSheet: React.FC<ArticleQuickSheetProps> = ({
       />
 
       {/* Floating Apple Sheet / Modal Surface */}
-      <div className="apple-glass relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/10 ring-1 ring-white/10 transition-all duration-300">
+      <div
+        className={`apple-glass relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl transition-all duration-300 ${
+          isMidu
+            ? 'border border-amber-400/35 ring-1 ring-amber-400/30 shadow-amber-950/30'
+            : 'border border-white/10 ring-1 ring-white/10'
+        }`}
+      >
         {/* Grab indicator for mobile sheet */}
         <div className="mx-auto -mt-2 mb-4 h-1.5 w-12 rounded-full bg-white/20 sm:hidden" />
 

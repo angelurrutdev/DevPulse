@@ -158,9 +158,10 @@ export function detectCategory(
   title: string,
   snippet: string,
   tags: string[] = [],
-  defaultFallback?: CategoryName
+  defaultFallback?: CategoryName,
+  strictlyForced = false
 ): CategoryName {
-  if (defaultFallback) {
+  if (strictlyForced && defaultFallback) {
     return defaultFallback;
   }
 
@@ -173,7 +174,7 @@ export function detectCategory(
   const maxScore = Math.max(aiScore, telecomScore, softwareScore);
 
   if (maxScore === 0) {
-    return 'General Tech';
+    return defaultFallback || 'General Tech';
   }
 
   if (aiScore === maxScore) {
@@ -188,7 +189,7 @@ export function detectCategory(
     return 'Telecomunicaciones';
   }
 
-  return 'General Tech';
+  return defaultFallback || 'General Tech';
 }
 
 const COMMON_TAG_PATTERNS: { regex: RegExp; tag: string }[] = [
@@ -216,6 +217,7 @@ const COMMON_TAG_PATTERNS: { regex: RegExp; tag: string }[] = [
   { regex: /\b(at&t|att)\b/i, tag: '#att' },
   { regex: /\b(huawei|harmonyos)\b/i, tag: '#huawei' },
   { regex: /\b(hugging\s?face)\b/i, tag: '#huggingface' },
+  { regex: /\b(medium)\b/i, tag: '#medium' },
 ];
 
 const NON_TECH_PATTERNS = [
@@ -251,6 +253,21 @@ export function extractHashtags(
     tagsSet.add('#midudev');
   }
 
+  // If medium, always include #medium
+  if (sourceId === 'medium') {
+    tagsSet.add('#medium');
+  }
+
+  // Include valid raw tags from feeds (Medium, DEV.to, etc.)
+  for (const raw of rawTags) {
+    if (typeof raw === 'string') {
+      const clean = raw.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      if (clean && clean.length >= 2 && clean.length <= 20 && !INVALID_TAGS.has(`#${clean}`) && !/^\d+$/.test(clean)) {
+        tagsSet.add(`#${clean}`);
+      }
+    }
+  }
+
   // Extract explicit #hashtags from text
   const explicitMatches = cleanedText.match(/#([a-zA-Z0-9_\u00C0-\u017F]{2,24})/g);
   if (explicitMatches) {
@@ -277,6 +294,6 @@ export function extractHashtags(
     if (category === 'General Tech') tagsSet.add('#technews');
   }
 
-  return Array.from(tagsSet).slice(0, 4);
+  return Array.from(tagsSet).slice(0, 5);
 }
 

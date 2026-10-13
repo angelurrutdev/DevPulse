@@ -130,18 +130,25 @@ export function useNews({ initialData }: UseNewsProps = {}) {
       if (sourceFilter !== 'all' && article.source.id !== sourceFilter) return false;
       if (hashtagFilter) {
         const tagNorm = hashtagFilter.toLowerCase();
-        const hasTag = article.hashtags?.some((t) => t.toLowerCase() === tagNorm);
-        const inText = article.title.toLowerCase().includes(tagNorm.replace('#', ''));
+        const hasTag = article.hashtags?.some(
+          (t) => t.toLowerCase() === tagNorm || t.toLowerCase().includes(tagNorm.replace('#', ''))
+        );
+        const tagKeyword = tagNorm.replace('#', '');
+        const inText =
+          article.title.toLowerCase().includes(tagKeyword) ||
+          article.snippet.toLowerCase().includes(tagKeyword);
         if (!hasTag && !inText) return false;
       }
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
-        return (
-          article.title.toLowerCase().includes(q) ||
-          article.snippet.toLowerCase().includes(q) ||
-          article.source.name.toLowerCase().includes(q) ||
-          (article.hashtags && article.hashtags.some((t) => t.toLowerCase().includes(q)))
-        );
+        const matchesTitle = article.title.toLowerCase().includes(q);
+        const matchesSnippet = article.snippet.toLowerCase().includes(q);
+        const matchesSource = article.source.name.toLowerCase().includes(q);
+        const matchesAuthor = article.author?.toLowerCase().includes(q) || false;
+        const matchesTag = article.hashtags?.some((t) => t.toLowerCase().includes(q)) || false;
+        if (!matchesTitle && !matchesSnippet && !matchesSource && !matchesAuthor && !matchesTag) {
+          return false;
+        }
       }
       return true;
     });

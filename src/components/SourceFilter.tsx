@@ -29,6 +29,7 @@ const SOURCES: SourceOption[] = [
   { id: 'huggingface', label: 'Hugging Face', category: 'community' },
   { id: 'devto', label: 'DEV Community', category: 'community' },
   { id: 'hackernews', label: 'Hacker News', category: 'community' },
+  { id: 'medium', label: 'Medium', category: 'media' },
   { id: 'techcrunch', label: 'TechCrunch', category: 'media' },
   { id: 'nyt', label: 'NY Times', category: 'media' },
 ];

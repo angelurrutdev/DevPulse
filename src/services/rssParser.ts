@@ -1,6 +1,7 @@
 import Parser from 'rss-parser';
 import type { Article, CategoryName, SourceInfo } from '../types/news';
 import { detectCategory, extractHashtags } from './categorizer';
+import { fetchMidudevArticles } from './midudevFetcher';
 
 // Custom fields to capture media, youtube metadata, and creators
 const parser = new Parser({
@@ -218,6 +219,22 @@ export const RSS_FEEDS: RssFeedConfig[] = [
     url: 'https://techcrunch.com/feed/',
   },
   {
+    sourceId: 'medium',
+    source: {
+      id: 'medium',
+      name: 'Medium',
+      shortName: 'Medium',
+      domain: 'medium.com',
+      badgeColor: 'bg-emerald-500/15 text-emerald-300 border-emerald-400/30',
+      textColor: 'text-emerald-300',
+      borderColor: 'border-emerald-400/40',
+      type: 'media',
+      avatarUrl: 'https://miro.medium.com/v2/1*TGH72Nnw24QL3iV9IOm4VA.png',
+      verified: true,
+    },
+    url: 'https://medium.com/feed/tag/technology',
+  },
+  {
     sourceId: 'nyt',
     source: {
       id: 'nyt',
@@ -311,6 +328,10 @@ export const RSS_FEEDS: RssFeedConfig[] = [
 ];
 
 export async function fetchRssFeed(config: RssFeedConfig): Promise<Article[]> {
+  if (config.sourceId === 'midudev') {
+    return await fetchMidudevArticles(config.source);
+  }
+
   const feed = await parser.parseURL(config.url);
 
   if (!feed.items || !Array.isArray(feed.items)) {
