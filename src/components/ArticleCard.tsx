@@ -221,7 +221,9 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
               )}
               <span>{article.source.name}</span>
               {article.source.verified && (
-                <ShieldCheck className="h-3 w-3 text-current" title="Fuente Oficial Verificada" />
+                <span title="Fuente Oficial Verificada" className="inline-flex items-center">
+                  <ShieldCheck className="h-3 w-3 text-current" />
+                </span>
               )}
             </span>
 

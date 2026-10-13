@@ -1,7 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
-import node from '@astrojs/node';
+import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
@@ -11,8 +11,11 @@ export default defineConfig({
     host: true,
     port: 4321,
   },
-  adapter: node({
-    mode: 'standalone',
+  adapter: vercel({
+    webAnalytics: {
+      enabled: true,
+    },
+    maxDuration: 30,
   }),
   integrations: [react()],
   vite: {
